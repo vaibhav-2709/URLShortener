@@ -1,14 +1,16 @@
-# Use official OpenJDK image
+# -------- Stage 1: Build --------
+FROM maven:3.9.6-eclipse-temurin-21-alpine AS builder
+
+WORKDIR /app
+COPY . .
+RUN mvn clean package -DskipTests
+
+# -------- Stage 2: Run --------
 FROM eclipse-temurin:21-jdk-alpine
 
-# Set working directory
 WORKDIR /app
+COPY --from=builder /app/target/*.jar app.jar
 
-# Copy jar file
-COPY target/urlshortener-0.0.1-SNAPSHOT.jar app.jar
-
-# Expose port
 EXPOSE 8080
 
-# Run app
-ENTRYPOINT ["java","-jar","app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
