@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+
+  mysql:
+    image: mysql:8
+    container_name: mysql-urlshortener
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: urlshortener
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  redis:
+    image: redis:7
+    container_name: redis-urlshortener
+    ports:
+      - "6379:6379"
+
+  app:
+    build: .
+    container_name: urlshortener-app
+    depends_on:
+      - mysql
+      - redis
+    ports:
+      - "8080:8080"
+    restart: always
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/urlshortener?allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - app
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+
+volumes:
+  mysql_data:
