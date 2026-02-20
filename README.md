@@ -7,10 +7,10 @@ Production-ready URL shortening service built using Spring Boot, PostgreSQL, Red
 ## 🌍 Live Demo
 
 🔗 API Base URL:
-https://your-render-url.onrender.com
+https://urlshortener-2zvl.onrender.com
 
 Test Endpoint:
-https://your-render-url.onrender.com/api/test
+https://urlshortener-2zvl.onrender.com/api/test
 
 ---
 
